@@ -64,10 +64,25 @@ app.whenReady().then(() => {
 
   var userTextInput = ""
 
-  function finishedReadingUserInputCallback() {
-    // we wish to start iohook here and wait until enter is pressed
-    console.log(userTextInput)
+  function finishedReadingUserInputCallback(input) {
+    // here is where we shove input into the python scripts
+    console.log(input)
 
+    // Determine the correct modifier key based on the OS
+    const isMac = process.platform === "darwin"
+    const modifierKey = isMac ? "command" : "control"
+
+    // clear old input and put in new
+    robot.keyToggle(modifierKey, 'down')
+    robot.keyToggle('shift', 'down')
+
+    robot.keyTap('a')
+    robot.keyTap('delete')
+
+    robot.keyToggle(modifierKey, 'up')
+    robot.keyToggle('shift', 'up')
+
+    
     // enter 
     robot.keyTap('enter')
 
@@ -89,27 +104,24 @@ app.whenReady().then(() => {
     robot.keyTap('y')
     
     // @Diyar: read text live here
+    var userInputText = ""
     readline.emitKeypressEvents(process.stdin);
 
     if (process.stdin.isTTY) {
       process.stdin.setRawMode(true)
     }
 
-    var userInputText = ""
-
     process.stdin.on('keypress', function (chunk, key) {
+      console.log(key)
       if (key && key.name == 'esc') {
-        userInputText = ""
         process.exit()
       } else if (key && key.name == 'enter') {
-        finishedReadingUserInputCallback()
+        finishedReadingUserInputCallback(userInputText)
         process.exit();
       } else {
         userInputText += key
       }
     })
-
-
   }
 
   isYShortcutRegistered = globalShortcut.register('y', handleYKeystroke)
