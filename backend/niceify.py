@@ -18,7 +18,7 @@ def reword_phrase(phrase_to_reword):
     
 def get_prompt(phrase_to_reword):
     return """You're a gamer and you are typing into the chat.
-    You type this phrase ("{}") but you don't want to be banned from the game. 
+    You type this phrase ({}) but you don't want to be banned from the game. 
     Reword the phrase to type into the chat so that it's not rude language but still insulting and a good roast!
     Be very insulting in a nicely worded way so that the player feels bad. Add some humor too!
     """.format(phrase_to_reword)
