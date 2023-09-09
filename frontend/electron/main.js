@@ -44,17 +44,6 @@ let tray = null
 var robot = require("robotjs")
 var isYShortcutRegistered = false
 
-readline.emitKeypressEvents(process.stdin);
-
-if (process.stdin.isTTY) {
-  process.stdin.setRawMode(true)
-}
-
-process.stdin.on('keypress', function (chunk, key) {
-  console.log(key)
-  if (key && key.name == 'q') process.exit();
-})
-
 app.whenReady().then(() => {
   tray = new Tray(path.join(app.getAppPath(), 'images', 'icon.ico'))
 
@@ -79,17 +68,6 @@ app.whenReady().then(() => {
     // we wish to start iohook here and wait until enter is pressed
     console.log(userTextInput)
 
-    // copy and paste function
-    /*
-    robot.keyToggle('control','down') 
-    robot.keyToggle('shift', 'down')
-    robot.keyTap('left')
-    robot.keyToggle('shift', 'up')
-    robot.keyTap('c')
-    robot.keyTap('v')
-    robot.keyToggle('control','up') 
-    */
-
     // enter 
     robot.keyTap('enter')
 
@@ -111,9 +89,27 @@ app.whenReady().then(() => {
     robot.keyTap('y')
     
     // @Diyar: read text live here
+    readline.emitKeypressEvents(process.stdin);
 
-    userTextInput = ""
-    finishedReadingUserInputCallback()
+    if (process.stdin.isTTY) {
+      process.stdin.setRawMode(true)
+    }
+
+    var userInputText = ""
+
+    process.stdin.on('keypress', function (chunk, key) {
+      if (key && key.name == 'esc') {
+        userInputText = ""
+        process.exit()
+      } else if (key && key.name == 'enter') {
+        finishedReadingUserInputCallback()
+        process.exit();
+      } else {
+        userInputText += key
+      }
+    })
+
+
   }
 
   isYShortcutRegistered = globalShortcut.register('y', handleYKeystroke)
