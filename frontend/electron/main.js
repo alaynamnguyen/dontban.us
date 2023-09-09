@@ -44,8 +44,67 @@ let tray = null
 var robot = require("robotjs")
 var isYShortcutRegistered = false
 
+// @Diyar: read text live here
+function finishedReadingUserInputCallback(input) {
+  // here is where we shove input into the python scripts
+  var output = python(input)
+
+  // Determine the correct modifier key based on the OS
+  const isMac = process.platform === "darwin"
+  const modifierKey = isMac ? "command" : "control"
+
+  // clear old input and put in new
+  robot.keyToggle(modifierKey, 'down')
+  robot.keyToggle('shift', 'down')
+
+  robot.keyTap('a')
+  robot.keyTap('delete')
+
+  robot.keyToggle(modifierKey, 'up')
+  robot.keyToggle('shift', 'up')
+
+  // add robot to add to clipboard but you can do robot.typeString for now..
+  robot.typeString(output)
+  
+  // enter 
+  robot.keyTap('enter')
+
+
+  setTimeout(() => {
+    if (!isYShortcutRegistered) {
+      globalShortcut.register('y', handleYKeystroke)
+      isYShortcutRegistered = true
+    }
+  }, 100)
+}
+
+var inputModeFlag = false
+var userInputText = ""
+readline.emitKeypressEvents(process.stdin);
+
+if (process.stdin.isTTY) {
+  process.stdin.setRawMode(true)
+}
+
+process.stdin.on('keypress', function (chunk, key) {
+  if (inputModeFlag) {
+  
+    console.log(key)
+    if (key && key.name === 'escape') {
+      inputModeFlag = false
+      process.exit()
+    } else if (key && key.name === 'return') {
+      finishedReadingUserInputCallback(userInputText)
+      inputModeFlag = false
+      process.exit();
+    } else {
+      userInputText += key.sequence
+    }
+  }
+})
+
 app.whenReady().then(() => {
-  tray = new Tray(path.join(app.getAppPath(), 'images', 'icon.ico'))
+  tray = new Tray(path.join(app.getAppPath(), 'images', 'icon.png'))
 
   const contextMenu = Menu.buildFromTemplate([
     {
@@ -64,37 +123,6 @@ app.whenReady().then(() => {
 
   var userTextInput = ""
 
-  function finishedReadingUserInputCallback(input) {
-    // here is where we shove input into the python scripts
-    console.log(input)
-
-    // Determine the correct modifier key based on the OS
-    const isMac = process.platform === "darwin"
-    const modifierKey = isMac ? "command" : "control"
-
-    // clear old input and put in new
-    robot.keyToggle(modifierKey, 'down')
-    robot.keyToggle('shift', 'down')
-
-    robot.keyTap('a')
-    robot.keyTap('delete')
-
-    robot.keyToggle(modifierKey, 'up')
-    robot.keyToggle('shift', 'up')
-
-    
-    // enter 
-    robot.keyTap('enter')
-
-
-    setTimeout(() => {
-      if (!isYShortcutRegistered) {
-        globalShortcut.register('y', handleYKeystroke)
-        isYShortcutRegistered = true
-      }
-    }, 100)
-  }
-
   const handleYKeystroke = () => {
     if (isYShortcutRegistered) {
       globalShortcut.unregister('y')
@@ -102,26 +130,7 @@ app.whenReady().then(() => {
     }
 
     robot.keyTap('y')
-    
-    // @Diyar: read text live here
-    var userInputText = ""
-    readline.emitKeypressEvents(process.stdin);
-
-    if (process.stdin.isTTY) {
-      process.stdin.setRawMode(true)
-    }
-
-    process.stdin.on('keypress', function (chunk, key) {
-      console.log(key)
-      if (key && key.name == 'esc') {
-        process.exit()
-      } else if (key && key.name == 'enter') {
-        finishedReadingUserInputCallback(userInputText)
-        process.exit();
-      } else {
-        userInputText += key
-      }
-    })
+    inputModeFlag = true
   }
 
   isYShortcutRegistered = globalShortcut.register('y', handleYKeystroke)
