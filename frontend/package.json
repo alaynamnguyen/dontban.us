@@ -6,6 +6,7 @@
         "start": "electron ."
     },
     "devDependencies": {
+        "@electron/rebuild": "^3.3.0",
         "electron": "^23.3.0",
         "electron-rebuild": "^3.2.9"
     },

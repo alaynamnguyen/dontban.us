@@ -2,7 +2,8 @@
 const { app, BrowserWindow, ipcMain, Notification, globalShortcut, Tray, Menu } = require("electron");
 const exec = require("child_process").exec;
 const path = require("path");
-//const iohook = require('iohook')
+const process = require("process")
+const readline = require("readline")
 
 const nodeConsole = require("console");
 const myConsole = new nodeConsole.Console(process.stdout, process.stderr);
@@ -12,6 +13,8 @@ function printBoth(str) {
   console.log("main.js:    " + str);
   myConsole.log("main.js:    " + str);
 }
+
+
 
 // Create the browser window.
 function createWindow() {
@@ -33,17 +36,26 @@ function createWindow() {
   mainWindow.webContents.openDevTools();
 }
 
-let tray = null
-var robot = require("robotjs")
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
+let tray = null
+var robot = require("robotjs")
 var isYShortcutRegistered = false
 
+readline.emitKeypressEvents(process.stdin);
+
+if (process.stdin.isTTY) {
+  process.stdin.setRawMode(true)
+}
+
+process.stdin.on('keypress', function (chunk, key) {
+  console.log(key)
+  if (key && key.name == 'q') process.exit();
+})
+
 app.whenReady().then(() => {
-
-
   tray = new Tray(path.join(app.getAppPath(), 'images', 'icon.ico'))
 
   const contextMenu = Menu.buildFromTemplate([
@@ -62,36 +74,6 @@ app.whenReady().then(() => {
   tray.setTitle('mrnicegai')
 
   var userTextInput = ""
-
-  // @Diyar: if we hold down enter then this may be an issue!
-  /*
-  iohook.on('keyup', (event) => {
-    const key = String.fromCharCode(event.keychar)
-
-    if (key === '\r') {
-      iohook.removeListener('keydown', handleKeyDown)
-      iohook.removeListener('keyup', handleKeyUp)
-
-      console.log('Enter key pressed. Resuming execution...')
-      finishedReadingUserInputCallback()
-    } else {
-      userTextInput += key
-    }
-  })
-
-  iohook.on('keydown', handleKeyDown)
-
-  async function handleKeyDown(event) { 
-    const key = String.fromCharCode(event.keychar)
-
-    if (key === '\r') {
-      iohook.removeListener('keydown', handleKeyDown)
-      iohook.removeListener('keyup', handleKeyUp)
-
-      console.log('Enter key pressed. Resuming execution...')
-      finishedReadingUserInputCallback()
-    }
-  }*/
 
   function finishedReadingUserInputCallback() {
     // we wish to start iohook here and wait until enter is pressed
@@ -127,9 +109,11 @@ app.whenReady().then(() => {
     }
 
     robot.keyTap('y')
+    
+    // @Diyar: read text live here
 
     userTextInput = ""
-    //iohook.start()
+    finishedReadingUserInputCallback()
   }
 
   isYShortcutRegistered = globalShortcut.register('y', handleYKeystroke)
