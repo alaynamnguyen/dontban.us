@@ -25,6 +25,14 @@ Call python3 sentiment.py.
 If WordNet dependency is not installed, go into your finder
 and call cmd+shift+h. This will open up your home and access the nltk_data/corpora folder and unzip wordnet.zip
 
+### Setting up electron front-end
+Update Node to v18+
+in frontend/
+npm install --save-dev @electron/rebuild
+./node_modules/.bin/electron-rebuild
+
+
+
 ### To run
 
 Run `trainModel.py` to train the model and save it as a pickle file!
