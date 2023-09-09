@@ -24,3 +24,7 @@ exit with control+d
 Call python3 sentiment.py.
 If WordNet dependency is not installed, go into your finder
 and call cmd+shift+h. This will open up your home and access the nltk_data/corpora folder and unzip wordnet.zip
+
+### To run
+
+Run `trainModel.py` to train the model and save it as a pickle file!
