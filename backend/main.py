@@ -2,6 +2,13 @@ import pickle
 from sentiment import get_sentiment
 from niceify import reword_phrase
 
+"""
+TODO:
+- Regex for credit card numbers / addresses / age / personal info
+- Handle for explicit curse words / slurs
+- Let the user add their own phrases to ban
+"""
+
 def main():
     # Load the saved classifier from the file
     with open('backend/sentimentClassifier.pickle', 'rb') as f:
