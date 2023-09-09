@@ -1,4 +1,11 @@
 import sys
+import os
+
+# # Add the path to the 'backend' directory to sys.path
+# backend_dir = os.path.join(os.path.dirname(__file__), '..', 'backend')
+# sys.path.append(backend_dir)
+
+# from backend.main import handle_message
 
 # FUNCTIONS
 
@@ -9,17 +16,15 @@ def my_print(str):
 
 # CODE
 
-
 my_print('Spawned from within electron (js)')
 
-while True:
-    line = sys.stdin.readline().strip()
+if len(sys.argv) >= 2:
+    # Access the first command-line argument (index 1) as a string
+    message = sys.argv[1]
+    message = message.replace("@", " ")
 
-    if line == "terminate":
-        my_print('I got a terminate request from electron (js)...terminating')
-        exit(0)
-    elif line == "":
-        my_print('Terminating as there is no data given...terminated')
-        exit(0)
-    else:
-        my_print('I got string: "' + line + '", from electron (js)')
+    # Now you can use 'string_parameter' in your Python code
+    print(f'Received string parameter: {message}')
+else:
+    print('No string parameter provided.')
+

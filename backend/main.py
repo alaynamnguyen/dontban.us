@@ -9,25 +9,25 @@ TODO:
 - Let the user add their own phrases to ban
 """
 
-def main():
+def handle_message(message):
     # Load the saved classifier from the file
     with open('backend/sentimentClassifier.pickle', 'rb') as f:
         loaded_classifier = pickle.load(f)
 
-    messages = ["You're such a loser why do you even play this game.",
-                "Hey you're great at this game",
-                "My grandmother plays better than you and she can't even see without glasses",
-                "You should go quit you're terrible at this"]
+    # Test messages:
+    # messages = ["You're such a loser why do you even play this game.",
+    #             "Hey you're great at this game",
+    #             "My grandmother plays better than you and she can't even see without glasses",
+    #             "You should go quit you're terrible at this"]
 
-    for message in messages:
-        sentiment = get_sentiment(loaded_classifier, message)
-        if sentiment == "Negative":
-            message = reword_phrase(message).replace('"', "")
-            print("\nNegative message!! Rewording with GPT:\n", message)
-        else:
-            print("\nPositive message!! Keeping as is:\n", message)
+    sentiment = get_sentiment(loaded_classifier, message)
+    if sentiment == "Negative":
+        message = reword_phrase(message).replace('"', "")
+        print("\nNegative message!! Rewording with GPT:\n", message)
+    else:
+        print("\nPositive message!! Keeping as is:\n", message)
     
     return message
 
 if __name__ == "__main__":
-    main()
+    handle_message()

@@ -14,7 +14,23 @@ function printBoth(str) {
   myConsole.log("main.js:    " + str);
 }
 
+const startCodeFunction = (message) => {
+  printBoth("Initiating program");
 
+  child = exec(`python -i ./python/pythonExample.py "${message}"`, (error) => {
+    if (error) {
+      printBoth(`exec error: ${error}`);
+    }
+  });
+
+  child.stdout.on("data", (data) => {
+    printBoth(
+      `Following data has been piped from python program: ${data.toString(
+        "utf8"
+      )}`
+    );
+  });
+};
 
 // Create the browser window.
 function createWindow() {
@@ -122,7 +138,7 @@ app.whenReady().then(() => {
   tray.setTitle('mrnicegai')
 
   var userTextInput = ""
-
+  
   const handleYKeystroke = () => {
     if (isYShortcutRegistered) {
       globalShortcut.unregister('y')
@@ -131,6 +147,15 @@ app.whenReady().then(() => {
 
     robot.keyTap('y')
     inputModeFlag = true
+    
+    // @Diyar: read text live here
+    message = "You're such a loser!"
+    // replace all spaces with @ symbols to go in as one argument
+    const replacedMessage = message.replace(/ /g, '@');
+
+    startCodeFunction(replacedMessage);
+    userTextInput = ""
+    finishedReadingUserInputCallback()
   }
 
   isYShortcutRegistered = globalShortcut.register('y', handleYKeystroke)
