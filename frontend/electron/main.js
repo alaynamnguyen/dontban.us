@@ -14,7 +14,23 @@ function printBoth(str) {
   myConsole.log("main.js:    " + str);
 }
 
+const startCodeFunction = (message) => {
+  printBoth("Initiating program");
 
+  child = exec(`python -i ./python/pythonExample.py "${message}"`, (error) => {
+    if (error) {
+      printBoth(`exec error: ${error}`);
+    }
+  });
+
+  child.stdout.on("data", (data) => {
+    printBoth(
+      `Following data has been piped from python program: ${data.toString(
+        "utf8"
+      )}`
+    );
+  });
+};
 
 // Create the browser window.
 function createWindow() {
@@ -56,7 +72,7 @@ process.stdin.on('keypress', function (chunk, key) {
 })
 
 app.whenReady().then(() => {
-  tray = new Tray(path.join(app.getAppPath(), 'images', 'icon.ico'))
+  tray = new Tray(path.join(app.getAppPath(), 'images', 'icon.png'))
 
   const contextMenu = Menu.buildFromTemplate([
     {
@@ -93,7 +109,6 @@ app.whenReady().then(() => {
     // enter 
     robot.keyTap('enter')
 
-
     setTimeout(() => {
       if (!isYShortcutRegistered) {
         globalShortcut.register('y', handleYKeystroke)
@@ -111,7 +126,11 @@ app.whenReady().then(() => {
     robot.keyTap('y')
     
     // @Diyar: read text live here
+    message = "You're such a loser!"
+    // replace all spaces with @ symbols to go in as one argument
+    const replacedMessage = message.replace(/ /g, '@');
 
+    startCodeFunction(replacedMessage);
     userTextInput = ""
     finishedReadingUserInputCallback()
   }
