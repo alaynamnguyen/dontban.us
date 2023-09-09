@@ -2,7 +2,7 @@
 const { app, BrowserWindow, ipcMain, Notification, globalShortcut, Tray, Menu } = require("electron");
 const exec = require("child_process").exec;
 const path = require("path");
-const iohook = require('iohook')
+//const iohook = require('iohook')
 
 const nodeConsole = require("console");
 const myConsole = new nodeConsole.Console(process.stdout, process.stderr);
@@ -64,6 +64,7 @@ app.whenReady().then(() => {
   var userTextInput = ""
 
   // @Diyar: if we hold down enter then this may be an issue!
+  /*
   iohook.on('keyup', (event) => {
     const key = String.fromCharCode(event.keychar)
 
@@ -90,7 +91,7 @@ app.whenReady().then(() => {
       console.log('Enter key pressed. Resuming execution...')
       finishedReadingUserInputCallback()
     }
-  }
+  }*/
 
   function finishedReadingUserInputCallback() {
     // we wish to start iohook here and wait until enter is pressed
@@ -128,7 +129,7 @@ app.whenReady().then(() => {
     robot.keyTap('y')
 
     userTextInput = ""
-    iohook.start()
+    //iohook.start()
   }
 
   isYShortcutRegistered = globalShortcut.register('y', handleYKeystroke)
