@@ -83,10 +83,10 @@ if __name__ == "__main__":
     classifier = NaiveBayesClassifier.train(train_data)
 
     # Save the trained classifier to a file using pickle
-    with open('backend/sentimentClassifier.pickle', 'wb') as f:
+    with open('./sentimentClassifier.pickle', 'wb') as f:
         pickle.dump(classifier, f)
 
-    print("Classifier saved to 'backend/sentiment_classifier.pickle'")
+    print("Classifier saved to './sentimentClassifier.pickle'")
 
     print("Accuracy is:", classify.accuracy(classifier, test_data))
 

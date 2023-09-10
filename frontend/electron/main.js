@@ -23,7 +23,6 @@ const startCodeFunction = (message, callback) => {
   pythonProcess.stdout.on('data', (data) => {
     // Do something with the data returned from python script
     globalData = data.toString("utf8");
-    console.log("got this", globalData);
     callback(globalData);
    });
   };
@@ -70,7 +69,8 @@ const handleYKeystroke = () => {
 function finishedReadingUserInputCallback(input) {
   // here is where we shove input into the python scripts
   var output = "HEY";
-  message = "You're such a loser!"
+  // message = "You're such a loser!"
+  message = input;
     // replace all spaces with @ symbols to go in as one argument
     const replacedMessage = message.replace(/ /g, '@');
 
