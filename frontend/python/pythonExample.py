@@ -55,9 +55,10 @@ def handle_message(message):
     sentiment = get_sentiment(loaded_classifier, message)
     if sentiment == "Negative":
         message = reword_phrase(message).replace('"', "")
-        print("\nNegative message!! Rewording with GPT:\n", message)
+        # print("\nNegative message!! Rewording with GPT:\n", message)
     else:
-        print("\nPositive message!! Keeping as is:\n", message)
+        pass
+        # print("\nPositive message!! Keeping as is:\n", message)
     
     return message
 
