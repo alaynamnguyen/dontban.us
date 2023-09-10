@@ -9,22 +9,21 @@ import os
 
 # FUNCTIONS
 
-
 def my_print(str):
-    print('Python    : "' + str + '"', flush=True)  # Add flush=True here
-
+    print(str, flush=True)  # Add flush=True here
 
 # CODE
 
-my_print('Spawned from within electron (js)')
+# my_print("HEY MAN")
+print("HEY MAN")
+sys.stdout.flush()
 
 if len(sys.argv) >= 2:
     # Access the first command-line argument (index 1) as a string
     message = sys.argv[1]
     message = message.replace("@", " ")
 
-    # Now you can use 'string_parameter' in your Python code
-    print(f'Received string parameter: {message}')
+    print(f'Python: Received string parameter: {message}')
 else:
-    print('No string parameter provided.')
+    print('Python: No string parameter provided.')
 

@@ -14,23 +14,19 @@ function printBoth(str) {
   myConsole.log("main.js:    " + str);
 }
 
-const startCodeFunction = (message) => {
+const startCodeFunction = (message, callback) => {
   printBoth("Initiating program");
-
-  child = exec(`python -i ./python/pythonExample.py "${message}"`, (error) => {
-    if (error) {
-      printBoth(`exec error: ${error}`);
-    }
-  });
-
-  child.stdout.on("data", (data) => {
-    printBoth(
-      `Following data has been piped from python program: ${data.toString(
-        "utf8"
-      )}`
-    );
-  });
-};
+  const spawn = require("child_process").spawn;
+  const pythonProcess = spawn('python',["./python/pythonExample.py", `"${message}"`]);
+  let globalData = "";
+  
+  pythonProcess.stdout.on('data', (data) => {
+    // Do something with the data returned from python script
+    globalData = data.toString("utf8");
+    console.log("got this", globalData);
+    callback(globalData);
+   });
+  };
 
 // Create the browser window.
 function createWindow() {
@@ -149,11 +145,7 @@ app.whenReady().then(() => {
     inputModeFlag = true
     
     // @Diyar: read text live here
-    message = "You're such a loser!"
-    // replace all spaces with @ symbols to go in as one argument
-    const replacedMessage = message.replace(/ /g, '@');
 
-    startCodeFunction(replacedMessage);
     userTextInput = ""
     finishedReadingUserInputCallback()
   }
