@@ -55,11 +55,29 @@ function createWindow() {
 let tray = null
 var robot = require("robotjs")
 var isYShortcutRegistered = false
+var inputModeFlag = false
 
-// @Diyar: read text live here
+const handleYKeystroke = () => {
+  if (isYShortcutRegistered) {
+    globalShortcut.unregister('y')
+    isYShortcutRegistered = false
+  }
+
+  robot.keyTap('y')
+  inputModeFlag = true
+}
+
 function finishedReadingUserInputCallback(input) {
   // here is where we shove input into the python scripts
-  var output = python(input)
+  var output = "HEY";
+  message = "You're such a loser!"
+    // replace all spaces with @ symbols to go in as one argument
+    const replacedMessage = message.replace(/ /g, '@');
+
+    startCodeFunction(replacedMessage, (result) => {
+      console.log("Result from Python:", result);
+      output = result;
+    });
 
   // Determine the correct modifier key based on the OS
   const isMac = process.platform === "darwin"
@@ -81,7 +99,6 @@ function finishedReadingUserInputCallback(input) {
   // enter 
   robot.keyTap('enter')
 
-
   setTimeout(() => {
     if (!isYShortcutRegistered) {
       globalShortcut.register('y', handleYKeystroke)
@@ -90,7 +107,6 @@ function finishedReadingUserInputCallback(input) {
   }, 100)
 }
 
-var inputModeFlag = false
 var userInputText = ""
 readline.emitKeypressEvents(process.stdin);
 
@@ -108,7 +124,7 @@ process.stdin.on('keypress', function (chunk, key) {
     } else if (key && key.name === 'return') {
       finishedReadingUserInputCallback(userInputText)
       inputModeFlag = false
-      process.exit();
+      //process.exit();
     } else {
       userInputText += key.sequence
     }
@@ -132,23 +148,6 @@ app.whenReady().then(() => {
 
   tray.setToolTip('mrnicegai')
   tray.setTitle('mrnicegai')
-
-  var userTextInput = ""
-  
-  const handleYKeystroke = () => {
-    if (isYShortcutRegistered) {
-      globalShortcut.unregister('y')
-      isYShortcutRegistered = false
-    }
-
-    robot.keyTap('y')
-    inputModeFlag = true
-    
-    // @Diyar: read text live here
-
-    userTextInput = ""
-    finishedReadingUserInputCallback()
-  }
 
   isYShortcutRegistered = globalShortcut.register('y', handleYKeystroke)
 
