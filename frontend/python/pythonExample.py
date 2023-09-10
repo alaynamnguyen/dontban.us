@@ -6,7 +6,7 @@ import os
 # sys.path.append(backend_dir)
 
 # from backend.main import handle_message
-# from main import handle_message
+from main import handle_message
 
 # FUNCTIONS
 
@@ -20,12 +20,13 @@ if len(sys.argv) >= 2:
     message = sys.argv[1]
     message = message.replace("@", " ")
 
-    print(f'Python: Received string parameter: {message}')
+    # print(f'Python: Received string parameter: {message}')
+
+    # Call the sentiment and GPT
+    message = handle_message(message)
 else:
-    print('Python: No string parameter provided.')
+    # print('Python: No string parameter provided.')
+    message = ""
 
-# Call the sentiment and GPT
-
-# my_print("HEY MAN")
-print("HEY MAN")
-sys.stdout.flush()
+my_print(message)
+# sys.stdout.flush()
