@@ -56,6 +56,22 @@ var robot = require("robotjs")
 var isYShortcutRegistered = false
 var inputModeFlag = false
 
+const endInputMode = () => {
+  for (let i = 33; i <= 126; i++) {
+    if (i === 43) continue
+
+    const asciiChar = String.fromCharCode(i)
+
+    globalShortcut.unregister(asciiChar)
+  }
+
+  globalShortcut.unregister('Backspace')
+  globalShortcut.unregister('Escape')
+  globalShortcut.unregister('Space')
+  globalShortcut.unregister('Return')
+
+}
+
 const handleYKeystroke = () => {
   if (isYShortcutRegistered) {
     globalShortcut.unregister('y')
@@ -63,7 +79,45 @@ const handleYKeystroke = () => {
   }
 
   robot.keyTap('y')
-  inputModeFlag = true
+
+  // register all keys to global shortcut
+  for (var i = 33; i <= 126; i++) {
+    if (i == 43) continue
+    const asciiChar = String.fromCharCode(i)
+
+    if (asciiChar === 'y') {
+      if (isYShortcutRegistered) {
+        globalShortcut.unregister('y')
+      }
+
+      globalShortcut.register('y', () => {
+        userInputText += 'y'
+      })
+      isYShortcutRegistered = true
+      continue
+    }
+    
+    globalShortcut.register(asciiChar, () => {
+      console.log(asciiChar)
+      userInputText += asciiChar
+    })
+  }
+
+  globalShortcut.register('Backspace', () => {
+    if (userInputText !== "") {
+      userInputText.slice(0, -1)
+    }
+  })
+  globalShortcut.register('Space', () => {
+    userInputText += " "
+  })
+  globalShortcut.register('Escape', () => {
+    endInputMode()
+  })
+  globalShortcut.register('Return', () => {
+    endInputMode()
+    finishedReadingUserInputCallback(userInputText)
+  })
 }
 
 function finishedReadingUserInputCallback(input) {
@@ -71,13 +125,13 @@ function finishedReadingUserInputCallback(input) {
   var output = "HEY";
   // message = "You're such a loser!"
   message = input;
-    // replace all spaces with @ symbols to go in as one argument
-    const replacedMessage = message.replace(/ /g, '@');
+  // replace all spaces with @ symbols to go in as one argument
+  const replacedMessage = message.replace(/ /g, '@');
 
-    startCodeFunction(replacedMessage, (result) => {
-      console.log("Result from Python:", result);
-      output = result;
-    });
+  startCodeFunction(replacedMessage, (result) => {
+    console.log("Result from Python:", result);
+    output = result;
+  });
 
   // Determine the correct modifier key based on the OS
   const isMac = process.platform === "darwin"
